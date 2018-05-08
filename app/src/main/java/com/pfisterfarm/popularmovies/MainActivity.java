@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import okhttp3.HttpUrl;
@@ -27,19 +30,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        popularMovies = new ArrayList<Movie>();
-        topRatedMovies = new ArrayList<Movie>();
-
-        fetchMovies(popularMovies, "popular");
-        fetchMovies(topRatedMovies, "top_rated");
+        try {
+            popularMovies = new fetchMoviesTask().execute("popular").get();
+            topRatedMovies = new fetchMoviesTask().execute("top_rated").get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
-    public class fetchMoviesTask extends AsyncTask<String, Void, String>  {
+    public class fetchMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>>  {
+
+        private static final String resultsStr = "results";
+        private static final String movieTitleStr = "original_title";
+        private static final String releaseDateStr = "release_date";
+        private static final String posterPathStr = "poster_path";
+        private static final String voteAverageStr = "vote_average";
+        private static final String plotSynopsisStr = "overview";
+
+        ArrayList<Movie> returnArray;
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected ArrayList<Movie> doInBackground(String... strings) {
 
             String whichMovies = strings[0];
             String fetchResponse;
@@ -57,23 +70,35 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Response response = client.newCall(request).execute();
                 fetchResponse = response.body().string();
+
+                returnArray = new ArrayList<Movie>();
+
+                try {
+                    JSONObject moviesObject = new JSONObject(fetchResponse);
+                    JSONArray moviesArray = moviesObject.getJSONArray(resultsStr);
+
+                    for (int i = 0; i < moviesArray.length(); i++) {
+
+                        JSONObject oneMovie = moviesArray.getJSONObject(i);
+
+                        returnArray.add(new Movie(oneMovie.getString(movieTitleStr),
+                                oneMovie.getString(releaseDateStr),
+                                oneMovie.getString(posterPathStr),
+                                oneMovie.getInt(voteAverageStr),
+                                oneMovie.getString(plotSynopsisStr)));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
-                fetchResponse = null;
+                return null;
             }
-            return fetchResponse;
+            return returnArray;
         }
-
-        @Override
-        protected void onPostExecute(String s) {
-            jsonResponse = s;
-        }
-    }
-
-    private void fetchMovies(ArrayList<Movie> movieArray, String whichMovies) {
-
-        new fetchMoviesTask().execute(whichMovies);
-
 
     }
 }

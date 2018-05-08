@@ -5,14 +5,14 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
-    private String title;
+    private String movieTitle;
     private String releaseDate;
     private String posterPath;
     private int voteAverage;
     private String plotSynopsis;
 
-    protected Movie(String title, String releaseDate, String posterPath, int voteAverage, String plotSynopsis) {
-        this.title = title;
+    protected Movie(String movieTitle, String releaseDate, String posterPath, int voteAverage, String plotSynopsis) {
+        this.movieTitle = movieTitle;
         this.releaseDate = releaseDate;
         this.posterPath = posterPath;
         this.voteAverage = voteAverage;
@@ -20,16 +20,58 @@ public class Movie implements Parcelable {
     }
 
     protected Movie(Parcel in) {
-        title = in.readString();
+        movieTitle = in.readString();
         releaseDate = in.readString();
         posterPath = in.readString();
         voteAverage = in.readInt();
         plotSynopsis = in.readString();
     }
 
+
+    public String getMovieTitle() {
+        return movieTitle;
+    }
+
+    public void setMovieTitle(String movieTitle) {
+        this.movieTitle = movieTitle;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
+    public int getVoteAverage() {
+        return voteAverage;
+    }
+
+    public void setVoteAverage(int voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public String getPlotSynopsis() {
+        return plotSynopsis;
+    }
+
+    public void setPlotSynopsis(String plotSynopsis) {
+        this.plotSynopsis = plotSynopsis;
+    }
+
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
+        dest.writeString(movieTitle);
         dest.writeString(releaseDate);
         dest.writeString(posterPath);
         dest.writeInt(voteAverage);
