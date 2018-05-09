@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Movie> popularMovies;
     ArrayList<Movie> topRatedMovies;
 
+    MovieAdapter popularMovieAdapter;
+
     String jsonResponse;
 
     @Override
@@ -33,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
         try {
             popularMovies = new fetchMoviesTask().execute("popular").get();
             topRatedMovies = new fetchMoviesTask().execute("top_rated").get();
+
+            popularMovieAdapter = new MovieAdapter(this, popularMovies);
+
+            GridView gridView = (GridView) findViewById(R.id.movieGrid);
+            gridView.setAdapter(popularMovieAdapter);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
