@@ -1,11 +1,15 @@
 package com.pfisterfarm.popularmovies;
 
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        final String MOVIE_KEY = "movie";
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -42,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
             GridView gridView = (GridView) findViewById(R.id.movieGrid);
             gridView.setAdapter(popularMovieAdapter);
 
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
+                    detailIntent.putExtra(MOVIE_KEY, popularMovies.get(i));
+                    startActivity(detailIntent);
+                }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public class fetchMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>>  {
 
         private static final String resultsStr = "results";
-        private static final String movieTitleStr = "original_title";
+        private static final String movieTitleStr = "title";
         private static final String releaseDateStr = "release_date";
         private static final String posterPathStr = "poster_path";
         private static final String voteAverageStr = "vote_average";
@@ -93,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         returnArray.add(new Movie(oneMovie.getString(movieTitleStr),
                                 oneMovie.getString(releaseDateStr),
                                 oneMovie.getString(posterPathStr),
-                                oneMovie.getInt(voteAverageStr),
+                                (float) oneMovie.getDouble(voteAverageStr),
                                 oneMovie.getString(plotSynopsisStr)));
                     }
 

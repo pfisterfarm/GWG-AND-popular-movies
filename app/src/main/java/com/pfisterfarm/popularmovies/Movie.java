@@ -8,10 +8,10 @@ public class Movie implements Parcelable {
     private String movieTitle;
     private String releaseDate;
     private String posterPath;
-    private int voteAverage;
+    private float voteAverage;
     private String plotSynopsis;
 
-    protected Movie(String movieTitle, String releaseDate, String posterPath, int voteAverage, String plotSynopsis) {
+    protected Movie(String movieTitle, String releaseDate, String posterPath, float voteAverage, String plotSynopsis) {
         this.movieTitle = movieTitle;
         this.releaseDate = releaseDate;
         this.posterPath = posterPath;
@@ -23,10 +23,17 @@ public class Movie implements Parcelable {
         movieTitle = in.readString();
         releaseDate = in.readString();
         posterPath = in.readString();
-        voteAverage = in.readInt();
+        voteAverage = in.readFloat();
         plotSynopsis = in.readString();
     }
 
+    protected String makePosterURL() {
+
+        final String BASE_URL = "http://image.tmdb.org/t/p/";
+        final String SIZE = "w185/";
+
+        return BASE_URL + SIZE + this.posterPath;
+    }
 
     public String getMovieTitle() {
         return movieTitle;
@@ -52,11 +59,11 @@ public class Movie implements Parcelable {
         this.posterPath = posterPath;
     }
 
-    public int getVoteAverage() {
+    public float getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(int voteAverage) {
+    public void setVoteAverage(float voteAverage) {
         this.voteAverage = voteAverage;
     }
 
@@ -74,7 +81,7 @@ public class Movie implements Parcelable {
         dest.writeString(movieTitle);
         dest.writeString(releaseDate);
         dest.writeString(posterPath);
-        dest.writeInt(voteAverage);
+        dest.writeFloat(voteAverage);
         dest.writeString(plotSynopsis);
     }
 
