@@ -5,24 +5,30 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
+    private long id;
     private String movieTitle;
     private String releaseDate;
     private String posterPath;
+    private String backdropPath;
     private float voteAverage;
     private String plotSynopsis;
 
-    protected Movie(String movieTitle, String releaseDate, String posterPath, float voteAverage, String plotSynopsis) {
+    protected Movie(long id, String movieTitle, String releaseDate, String posterPath, String backdropPath, float voteAverage, String plotSynopsis) {
+        this.id = id;
         this.movieTitle = movieTitle;
         this.releaseDate = releaseDate;
         this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
         this.voteAverage = voteAverage;
         this.plotSynopsis = plotSynopsis;
     }
 
     protected Movie(Parcel in) {
+        id = in.readLong();
         movieTitle = in.readString();
         releaseDate = in.readString();
         posterPath = in.readString();
+        backdropPath = in.readString();
         voteAverage = in.readFloat();
         plotSynopsis = in.readString();
     }
@@ -34,6 +40,20 @@ public class Movie implements Parcelable {
 
         return BASE_URL + SIZE + this.posterPath;
     }
+
+    protected String makeBackdropURL() {
+
+        final String BASE_URL = "http://image.tmdb.org/t/p/";
+        final String SIZE = "w185/";
+
+        return BASE_URL + SIZE + this.backdropPath;
+    }
+
+    public long getId() { return id; }
+
+    public void setId(long id) {
+        this.id = id;
+}
 
     public String getMovieTitle() {
         return movieTitle;
@@ -59,6 +79,14 @@ public class Movie implements Parcelable {
         this.posterPath = posterPath;
     }
 
+    public String getBackdropPAth() {
+        return backdropPath;
+        }
+
+        public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
+}
+
     public float getVoteAverage() {
         return voteAverage;
     }
@@ -78,9 +106,11 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(movieTitle);
         dest.writeString(releaseDate);
         dest.writeString(posterPath);
+        dest.writeString(backdropPath);
         dest.writeFloat(voteAverage);
         dest.writeString(plotSynopsis);
     }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_popular"
+        android:enabled="true"
+        android:icon="@drawable/ic_camera"
+        android:checkable="true"
+        android:checked="true"
+        android:title="Popular"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_top_rated"
+        android:enabled="true"
+        android:icon="@drawable/ic_thumbs_up"
+        android:checkable="true"
+        android:checked="false"
+        android:title="Top Rated"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_favorite"
+        android:enabled="false"
+        android:icon="@drawable/ic_favorites"
+        android:checkable="true"
+        android:checked="false"
+        android:title="Favorites"
+        app:showAsAction="ifRoom" />
+</menu>

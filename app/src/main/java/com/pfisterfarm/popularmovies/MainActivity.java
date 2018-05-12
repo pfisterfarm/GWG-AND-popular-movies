@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            android.support.design.widget.BottomNavigationView bottomNav = (android.support.design.widget.BottomNavigationView) findViewById(R.id.bottom_nav);
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
     public class fetchMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>>  {
 
+        private static final String idStr = "id";
         private static final String resultsStr = "results";
         private static final String movieTitleStr = "title";
         private static final String releaseDateStr = "release_date";
         private static final String posterPathStr = "poster_path";
+        private static final String backdropPathStr = "backdrop_path";
         private static final String voteAverageStr = "vote_average";
         private static final String plotSynopsisStr = "overview";
 
@@ -106,9 +112,11 @@ public class MainActivity extends AppCompatActivity {
 
                         JSONObject oneMovie = moviesArray.getJSONObject(i);
 
-                        returnArray.add(new Movie(oneMovie.getString(movieTitleStr),
+                        returnArray.add(new Movie(oneMovie.getLong(idStr),
+                                oneMovie.getString(movieTitleStr),
                                 oneMovie.getString(releaseDateStr),
                                 oneMovie.getString(posterPathStr),
+                                oneMovie.getString(backdropPathStr),
                                 (float) oneMovie.getDouble(voteAverageStr),
                                 oneMovie.getString(plotSynopsisStr)));
                     }
