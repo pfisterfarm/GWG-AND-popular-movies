@@ -3,8 +3,12 @@ package com.pfisterfarm.popularmovies;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -24,11 +28,19 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String sApiKey = BuildConfig.API_KEY;
+    private static final int POPULAR = 0;
+    private static final int TOPRATED = 1;
 
     ArrayList<Movie> popularMovies;
     ArrayList<Movie> topRatedMovies;
 
-    MovieAdapter popularMovieAdapter;
+    MovieAdapter popularMovieAdapter, topRatedMovieAdapter;
+
+    int displayMode = POPULAR;
+
+    private static final String displayModeStr = "displayMode";
+    private static final String popularStr = "popular";
+    private static final String topRatedStr = "top_rated";
 
     String jsonResponse;
 
@@ -41,32 +53,87 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            popularMovies = new fetchMoviesTask().execute("popular").get();
-            topRatedMovies = new fetchMoviesTask().execute("top_rated").get();
+            if ((savedInstanceState == null) ||
+            ! (((savedInstanceState.containsKey(displayModeStr)) &&
+                    (savedInstanceState.containsKey(popularStr)) &&
+                    (savedInstanceState.containsKey(topRatedStr))))) {
+                popularMovies = new fetchMoviesTask().execute("popular").get();
+                topRatedMovies = new fetchMoviesTask().execute("top_rated").get();
+            } else {
+                displayMode = savedInstanceState.getInt(displayModeStr);
+                popularMovies = savedInstanceState.getParcelableArrayList(popularStr);
+                topRatedMovies = savedInstanceState.getParcelableArrayList(topRatedStr);
+            }
 
             popularMovieAdapter = new MovieAdapter(this, popularMovies);
+            topRatedMovieAdapter = new MovieAdapter(this, topRatedMovies);
 
-            GridView gridView = (GridView) findViewById(R.id.movieGrid);
-            gridView.setAdapter(popularMovieAdapter);
+            final GridView gridView = (GridView) findViewById(R.id.movieGrid);
+            switch (displayMode) {
+                case POPULAR:
+                    gridView.setAdapter(popularMovieAdapter);
+                    break;
+                case TOPRATED:
+                    gridView.setAdapter(topRatedMovieAdapter);
+                    break;
+            }
 
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-                    detailIntent.putExtra(MOVIE_KEY, popularMovies.get(i));
+                    switch (displayMode) {
+                        case POPULAR:
+                            detailIntent.putExtra(MOVIE_KEY, popularMovies.get(i));
+                            break;
+                        case TOPRATED:
+                            detailIntent.putExtra(MOVIE_KEY, topRatedMovies.get(i));
+                            break;
+                    }
                     startActivity(detailIntent);
                 }
             });
 
             android.support.design.widget.BottomNavigationView bottomNav = (android.support.design.widget.BottomNavigationView) findViewById(R.id.bottom_nav);
 
-
+            bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_popular:
+                            if (displayMode != POPULAR) {
+                                displayMode = POPULAR;
+                                gridView.setAdapter(popularMovieAdapter);
+                                gridView.invalidate();
+                            }
+                            break;
+                        case R.id.action_top_rated:
+                            if (displayMode != TOPRATED) {
+                                displayMode = TOPRATED;
+                                gridView.setAdapter(topRatedMovieAdapter);
+                                gridView.invalidate();
+                            }
+                            // favorites menu item is a placeholder until Stage 2
+                        case R.id.action_favorite:
+                            break;
+                    }
+                    return true;
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(displayModeStr, displayMode);
+        outState.putParcelableArrayList(popularStr, popularMovies);
+        outState.putParcelableArrayList(topRatedStr, topRatedMovies);
+        super.onSaveInstanceState(outState);
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, ArrayList<Movie>>  {
