@@ -26,8 +26,9 @@ public class DetailActivity extends AppCompatActivity {
 
         ImageView iv_poster = (ImageView) findViewById(R.id.poster_detail_iv);
         Picasso.with(this).
-                load(detailMovie.makePosterURL())
-                .into(iv_poster);
+                load(detailMovie.makePosterURL()).
+                error(R.drawable.placeholder).
+                into(iv_poster);
 
         TextView tv_release_date = (TextView) findViewById(R.id.release_date_tv);
         tv_release_date.setText(detailMovie.getReleaseDate());
