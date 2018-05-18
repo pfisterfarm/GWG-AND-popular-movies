@@ -1,6 +1,10 @@
 package com.pfisterfarm.popularmovies;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
   MovieAdapter popularMovieAdapter, topRatedMovieAdapter;
   GridView gridView;
   Parcelable scrollState;
+  public IntentFilter connectIntent;
+  public connectBroadcastReceiver connectivityReceiver;
 
   int displayMode = POPULAR;
   static boolean dataLoaded = false;
@@ -57,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     gridView = (GridView) findViewById(R.id.movieGrid);
+
+    // get a broadcast receiver ready to check if data needs to be loaded when
+      // network has just become available
+    connectIntent = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+    connectivityReceiver = new connectBroadcastReceiver();
 
      try {
       if ((savedInstanceState == null) ||
@@ -94,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
           gridView.setAdapter(topRatedMovieAdapter);
           break;
       }
+      gridView.invalidate();    // force update on initial load
 
       gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
@@ -143,7 +155,24 @@ public class MainActivity extends AppCompatActivity {
     }
     }
 
-  private void loadData() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(connectivityReceiver, connectIntent);
+        if (!dataLoaded) {
+            if (helpers.isOnline(this)) {
+                loadData();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(connectivityReceiver);
+    }
+
+    private void loadData() {
       if (!dataLoaded) {
           Call<Movies> call = tmdbService.fetchPopularMovies(sApiKey);
           // Use retrofit to fetch the popular movies
@@ -199,4 +228,22 @@ public class MainActivity extends AppCompatActivity {
     super.onSaveInstanceState(outState);
   }
 
+  public class connectBroadcastReceiver extends BroadcastReceiver {
+
+      @Override
+      public void onReceive(Context context, Intent intent) {
+          /*
+
+            if we are notified about a connectivity change, see if the
+            data has been loaded yet, and if not and we are on the network
+            grab the data while you can!
+
+           */
+          if (!dataLoaded) {
+              if (helpers.isOnline(context)) {
+                  loadData();
+              }
+          }
+      }
+  }
 }
