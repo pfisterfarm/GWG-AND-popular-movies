@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
     tools:layout_editor_absoluteY="81dp">
 
     <ImageView
@@ -54,6 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <TextView
+        android:id="@+id/overview_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -61,18 +69,18 @@
         android:layout_marginTop="44dp"
         android:text="@string/overview_label"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/poster_detail_iv" />
+        app:layout_constraintStart_toEndOf="@id/poster_detail_iv"
+        app:layout_constraintTop_toBottomOf="@id/votes_rb"/>
+
 
     <TextView
         android:id="@+id/overview_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_width="375dp"
+        android:layout_height="304dp"
         android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/poster_detail_iv"
+        app:layout_constraintStart_toEndOf="@id/poster_detail_iv"
+        app:layout_constraintTop_toBottomOf="@id/overview_label"
         tools:text="@tools:sample/lorem/random" />
 
 </android.support.constraint.ConstraintLayout>
+</ScrollView>

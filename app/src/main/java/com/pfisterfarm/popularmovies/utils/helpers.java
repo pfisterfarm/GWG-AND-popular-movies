@@ -4,7 +4,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
+import android.view.MenuItem;
+
+import com.pfisterfarm.popularmovies.models.Movie;
+import com.pfisterfarm.popularmovies.R;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static java.text.DateFormat.getDateInstance;
 
 public class helpers {
 
@@ -29,10 +39,27 @@ public class helpers {
         builder.setMessage(context.getString(messageId));
 
         // add a button
-        builder.setPositiveButton("OK", null);
+        builder.setPositiveButton(R.string.OK_text, null);
 
         // create and show the alert dialog
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public static void fixDates(ArrayList<Movie> movieArray) {
+        /*
+            fixDates - convert ISO 8601 dates received from tmdb into more friendly format
+        */
+        SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd",
+                java.util.Locale.getDefault());
+
+        for (int i=0; i < movieArray.size(); i++) {
+            try {
+                Date releaseDateObj = dateParser.parse(movieArray.get(i).getReleaseDate());
+                movieArray.get(i).setReleaseDate(getDateInstance(DateFormat.MEDIUM).format(releaseDateObj));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

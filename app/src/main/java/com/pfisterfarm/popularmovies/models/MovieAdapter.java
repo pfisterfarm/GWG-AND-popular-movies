@@ -1,4 +1,4 @@
-package com.pfisterfarm.popularmovies;
+package com.pfisterfarm.popularmovies.models;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -10,6 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+
+import com.pfisterfarm.popularmovies.R;
+import com.pfisterfarm.popularmovies.models.Movie;
 import com.squareup.picasso.Picasso;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
@@ -32,6 +35,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         Picasso.with(getContext()).
                 load(thisMovie.makePosterURL()).
                 error(R.drawable.placeholder).
+                fit().
                 into(movieView);
 
         return convertView;

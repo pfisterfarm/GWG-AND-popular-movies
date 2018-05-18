@@ -6,9 +6,9 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.pfisterfarm.popularmovies.models.Movie;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -28,6 +28,7 @@ public class DetailActivity extends AppCompatActivity {
         Picasso.with(this).
                 load(detailMovie.makePosterURL()).
                 error(R.drawable.placeholder).
+                fit().
                 into(iv_poster);
 
         TextView tv_release_date = (TextView) findViewById(R.id.release_date_tv);

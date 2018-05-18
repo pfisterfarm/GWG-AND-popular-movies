@@ -1,16 +1,31 @@
-package com.pfisterfarm.popularmovies;
+package com.pfisterfarm.popularmovies.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Movie implements Parcelable {
 
+    @SerializedName("id")
     private long id;
+
+    @SerializedName("title")
     private String movieTitle;
+
+    @SerializedName("release_date")
     private String releaseDate;
+
+    @SerializedName("poster_path")
     private String posterPath;
+
+    @SerializedName("backdrop_path")
     private String backdropPath;
+
+    @SerializedName("vote_average")
     private float voteAverage;
+
+    @SerializedName("overview")
     private String plotSynopsis;
 
     protected Movie(long id, String movieTitle, String releaseDate, String posterPath, String backdropPath, float voteAverage, String plotSynopsis) {
@@ -33,7 +48,7 @@ public class Movie implements Parcelable {
         plotSynopsis = in.readString();
     }
 
-    protected String makePosterURL() {
+    public String makePosterURL() {
 
         final String BASE_URL = "http://image.tmdb.org/t/p/";
         final String SIZE = "w185/";
@@ -49,11 +64,13 @@ public class Movie implements Parcelable {
         return BASE_URL + SIZE + this.backdropPath;
     }
 
-    public long getId() { return id; }
+    public long getId() {
+        return id;
+    }
 
     public void setId(long id) {
         this.id = id;
-}
+    }
 
     public String getMovieTitle() {
         return movieTitle;
@@ -81,9 +98,9 @@ public class Movie implements Parcelable {
 
     public String getBackdropPAth() {
         return backdropPath;
-        }
+    }
 
-        public void setBackdropPath(String backdropPath) {
+    public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
 }
 
